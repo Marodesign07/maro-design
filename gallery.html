@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#08050f">
+    <meta name="description" content="معرض تصاميم MARO DESIGN - اختار التصميم المناسب واطلبه مباشرة عبر واتساب.">
+    <meta name="author" content="MARO DESIGN">
+    <title>معرض التصاميم | MARO DESIGN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+
+    <style>
+        /* تنسيقات خاصة بصفحة المعرض */
+        .logo-gallery-grid.is-dark .logo-item>img {
+            aspect-ratio: var(--ratio, 3 / 4);
+            padding: 0;
+            background: var(--bg-soft);
+        }
+
+        .gallery-empty {
+            grid-column: 1 / -1;
+            padding: 40px 20px;
+            border: 1px dashed var(--border);
+            border-radius: 18px;
+            color: var(--muted);
+            text-align: center;
+            line-height: 2;
+        }
+
+        .gallery-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 40px;
+        }
+
+        .gallery-footer .order-button {
+            min-height: 46px;
+            padding: 11px 22px;
+            font-size: 14px;
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <a class="brand" href="index.html#home" aria-label="MARO DESIGN - الرئيسية">
+            <span class="brand-icon">MD</span>
+            <span class="brand-text">
+                <strong>MARO <span>DESIGN</span></strong>
+                <small>CREATIVE DESIGN STUDIO</small>
+            </span>
+        </a>
+
+        <nav class="navigation" aria-label="القائمة الرئيسية">
+            <a href="index.html#home">الرئيسية</a>
+            <a href="index.html#services">خدماتنا</a>
+            <a href="index.html#about">من نحن</a>
+            <a href="index.html#contact">تواصل معنا</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="logo-gallery section" id="gallery">
+            <div class="section-heading">
+                <span class="eyebrow" id="gallery-eyebrow">PORTFOLIO</span>
+                <h2 id="gallery-title">معرض التصاميم</h2>
+                <p id="gallery-desc">اضغط على التصميم المناسب ليك واطلبه مباشرة عبر واتساب.</p>
+            </div>
+
+            <div class="logo-gallery-grid" id="gallery-grid"></div>
+
+            <div class="gallery-footer">
+                <a class="order-button" id="custom-order" href="https://wa.me/201145436737" data-service="">اطلب تصميم
+                    مخصوص ←</a>
+                <a class="primary-button" href="index.html#services"><span aria-hidden="true">→</span> الرجوع
+                    للخدمات</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <a class="brand" href="index.html#home" aria-label="MARO DESIGN - العودة للرئيسية">
+            <span class="brand-icon">MD</span>
+            <span class="brand-text">
+                <strong>MARO <span>DESIGN</span></strong>
+                <small>CREATIVE DESIGN STUDIO</small>
+            </span>
+        </a>
+        <p>© <span id="year">2026</span> MARO DESIGN — جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script>
+        // ============================================
+        // إعدادات الأقسام
+        // folder: فولدر الصور | prefix: بداية اسم الصورة
+        // الصور لازم تكون مرقمة: prefix-1 و prefix-2 و prefix-3 ...
+        // ============================================
+        var EXTENSION = ".png.jpeg";
+        var MAX_IMAGES = 60;
+
+        var GALLERIES = {
+            logos: {
+                eyebrow: "LOGO PORTFOLIO",
+                title: "اختار اللوجو اللي عجبك",
+                label: "لوجو",
+                service: "تصميم لوجو",
+                folder: "images/logos/",
+                prefix: "logo-",
+                dark: false
+            },
+            posters: {
+                eyebrow: "POSTERS PORTFOLIO",
+                title: "اختار البوستر اللي عجبك",
+                label: "بوستر",
+                service: "بوسترات إعلانية",
+                folder: "images/posters/",
+                prefix: "poster-",
+                dark: true,
+                ratio: "3 / 4"
+            },
+            menus: {
+                eyebrow: "MENU PORTFOLIO",
+                title: "اختار المينيو اللي عجبك",
+                label: "مينيو",
+                service: "تصميم مينيو",
+                folder: "images/menus/",
+                prefix: "menu-",
+                dark: true,
+                ratio: "3 / 4"
+            },
+            cards: {
+                eyebrow: "BUSINESS CARD PORTFOLIO",
+                title: "اختار البيزنس كارد اللي عجبك",
+                label: "بيزنس كارد",
+                service: "بيزنس كارد",
+                folder: "images/business-cards/",
+                prefix: "card-",
+                dark: true,
+                ratio: "4 / 3"
+            },
+            covers: {
+                eyebrow: "BOOK COVERS PORTFOLIO",
+                title: "اختار غلاف الكتاب اللي عجبك",
+                label: "غلاف",
+                service: "أغلفة كتب",
+                folder: "images/book-covers/",
+                prefix: "cover-",
+                dark: true,
+                ratio: "2 / 3"
+            },
+            cv: {
+                eyebrow: "CV PORTFOLIO",
+                title: "اختار السيرة الذاتية اللي عجبتك",
+                label: "سيرة ذاتية",
+                service: "تصميم سيرة ذاتية (CV)",
+                folder: "images/cv/",
+                prefix: "cv-",
+                dark: true,
+                ratio: "3 / 4"
+            }
+        };
+
+        var WHATSAPP = "201145436737";
+
+        // ============================================
+        // قصص اللوجوهات (قسم اللوجو بيعرض دول بس)
+        // logo: صورة اللوجو | mockup: صورة التطبيق على أرض الواقع
+        // لو صورة الموك أب مش موجودة بتتخفي لوحدها
+        // عدّل الشرح براحتك
+        // ============================================
+        var CASE_STUDIES = {
+        logos: {
+            title: "ورا كل لوجو حكاية",
+            mainLabel: "اللوجو",
+            desc: "من شغلنا: بنحكيلك فكرة كل لوجو وليه اتصمم كده، وتقدر تطلب لوجو بنفس الروح لمشروعك.",
+            orderLabel: "اطلب لوجو زي ده",
+            orderMsg: "عايز لوجو بنفس فكرة لوجو ",
+            items: [
+            {
+                name: "سمو",
+                tag: "براند عبايات",
+                logo: "images/logos/logo-4" + EXTENSION,
+                mockup: "images/logos/mockup-sumou.jpg",
+                points: [
+                    ["معنى الاسم", "«سمو» يعني الرفعة والرُقي، وده بالظبط الإحساس اللي بتدّيه العباية لصاحبتها."],
+                    ["الخط", "خط عربي حر بحركات انسيابية زي قماش العباية وهو بينسدل، من غير حدود جامدة."],
+                    ["اللون", "كحلي هادي على أبيض: فخامة من غير بهرجة."],
+                    ["الرمز", "الزخرفة الصغيرة حوالين الاسم بتمثل تطريزة العباية."]
+                ],
+                result: "هوية تخلي البراند يبان فخم من أول نظرة."
+            },
+            {
+                name: "مكانك",
+                tag: "كافيه ومطعم",
+                logo: "images/logos/logo-5" + EXTENSION,
+                mockup: "images/logos/mockup-makanak.jpg",
+                points: [
+                    ["معنى الاسم", "«مكانك» يعني المكان اللي يخصك، الإحساس إنك قاعد في بيتك."],
+                    ["الخط", "خط عريض بزوايا حادة بيشد العين من بعيد وبيتقري بسهولة على اللافتة."],
+                    ["اللون", "البرتقالي بيفتح النفس ويدفّي المكان، وهو لون بيتفكر بسرعة."],
+                    ["الرمز", "الدايرة الغامقة ورا الاسم بتشبه الفنجان من فوق، فالفكرة تتفهم من غير شرح."]
+                ],
+                result: "لوجو يتشاف من الشارع ويتفتكر."
+            },
+            {
+                name: "اللاعبين",
+                tag: "ألعاب إلكترونية",
+                logo: "images/logos/logo-6" + EXTENSION,
+                mockup: "images/logos/mockup-players.jpg",
+                points: [
+                    ["معنى الاسم", "«اللاعبين» اسم مباشر بيقول النشاط من غير تفكير، والجمهور يفهمه في ثانية."],
+                    ["الخط", "خط عريض مدوّر بحروف تقيلة بروح الكرتون والألعاب."],
+                    ["اللون", "تركواز وأصفر على خلفية سودا: ألوان صارخة شبه شاشات الألعاب وبتلمع في الضلمة."],
+                    ["الرمز", "دراعين تحكم على الجانبين مع شكل البرق، بيدّوا إحساس الحماس والسرعة."]
+                ],
+                result: "لوجو بيكلّم جمهوره بلغته من أول نظرة."
+            },
+            {
+                name: "سكن",
+                tag: "عقارات وسكن",
+                logo: "images/logos/logo-7" + EXTENSION,
+                mockup: "images/logos/mockup-sakan.jpg",
+                points: [
+                    ["معنى الاسم", "«سكن» يعني السكينة والاستقرار، وجملة Feel Home تحته بتوصّل إحساس البيت."],
+                    ["الخط", "خط كوفي بخطوط ثابتة وزوايا حادة بيدّي إحساس الأمان والثقة."],
+                    ["اللون", "أسود على خلفية دافية فاتحة: وضوح وثقة وتدفئة في نفس الوقت."],
+                    ["الرمز", "شكل بسيط فوق الاسم بيشبه الباب أو البيت، بيمثل المدخل والاستقرار."]
+                ],
+                result: "هوية تطمّن العميل قبل ما يدخل المكان."
+            },
+            {
+                name: "ترف",
+                tag: "براند فخامة",
+                logo: "images/logos/logo-9" + EXTENSION,
+                mockup: "images/logos/mockup-tarf.jpg",
+                points: [
+                    ["معنى الاسم", "«ترف» يعني الرفاهية والرُقي، كلمة قصيرة وتتحفظ بسهولة."],
+                    ["الخط", "خط عصري بقصّات حادة وحروف مترابطة، شكله ثابت وراقي."],
+                    ["اللون", "كحلي غامق على أزرق سماوي هادي: أناقة من غير زحمة."],
+                    ["الرمز", "الاسم نفسه هو الرمز، وده بيخليه سهل يتطبع على أي منتج أو علبة."]
+                ],
+                result: "بساطة بتدّي إحساس الفخامة."
+            }
+            ]
+        },
+        posters: {
+            title: "ورا كل بوستر فكرة",
+            mainLabel: "البوستر",
+            desc: "من شغلنا: بنشرحلك إزاي كل بوستر اتبنى عشان يشدّ العين ويوصّل الرسالة، وتقدر تطلب بوستر بنفس الأسلوب.",
+            orderLabel: "اطلب بوستر زي ده",
+            orderMsg: "عايز بوستر بنفس فكرة بوستر ",
+            items: [
+            {
+                name: "مدرس اللغة الإنجليزية",
+                tag: "إعلان مدرس",
+                logo: "images/posters/poster-4" + EXTENSION,
+                mockup: "images/posters/mockup-english.jpg",
+                points: [
+                    ["الفكرة", "السبورة هي الخلفية، فالبوستر بيقول «ده فصل» من أول نظرة، والمدرس واقف بابتسامة بيدّي ثقة وقرب."],
+                    ["الألوان", "رمادي السبورة مع أحمر وأزرق من علم بريطانيا (الساعة والقميص): ربط بصري باللغة من غير كلام."],
+                    ["ترتيب العناصر", "الصورة على الشمال والنص على اليمين، واسم المدرس بخط عريض كبير هو أول حاجة العين بتقراها."],
+                    ["الرسالة", "عبارة «بداية الحجز» مع 3 نقاط بسيطة، وشريط الحجز تحت فيه الرقم، فولي الأمر يقرر بسرعة."]
+                ],
+                result: "بوستر يخلّي ولي الأمر يفهم العرض ويحجز في ثواني."
+            },
+            {
+                name: "مستشفى الرواد",
+                tag: "قطاع طبي",
+                logo: "images/posters/poster-5" + EXTENSION,
+                mockup: "images/posters/mockup-hospital.jpg",
+                points: [
+                    ["الفكرة", "صورة الدكتور المبتسم جوه دايرة كبيرة في النص بتدّي إحساس الثقة والأمان قبل ما تقرأ أي كلمة."],
+                    ["الألوان", "درجات الأزرق والأبيض: ألوان الطب والنظافة والهدوء، وكحلي غامق لكلمة «متكاملة» عشان تتأكّد."],
+                    ["ترتيب العناصر", "موجات زرقاء من تحت بتجمع التواصل (زرار احجز والرقم والموقع)، فالعين تنزل من الصورة للعنوان للحجز."],
+                    ["الرسالة", "عنوان من 3 كلمات «خدمات طبية متكاملة»: واضح ومفيهوش زحمة."]
+                ],
+                result: "ثقة من أول نظرة، وزرار حجز واضح."
+            },
+            {
+                name: "بطولة ألعاب",
+                tag: "فعالية ألعاب",
+                logo: "images/posters/poster-2" + EXTENSION,
+                mockup: "images/posters/mockup-gaming.jpg",
+                points: [
+                    ["الفكرة", "ستايل كوميكس بخطوط شعاعية وأدوات تحكم صفرا بيدّي طاقة وحماس زي غلاف لعبة."],
+                    ["الألوان", "بنفسجي وأصفر: تباين قوي بيشدّ العين في ثانية ويوقّف السكرول على السوشيال ميديا."],
+                    ["الخط", "خط عريض بحواف سودا جامدة، العنوان بيتقرا من بعيد وبيحسسك بصرخة المنافسة."],
+                    ["الرسالة", "تلات دواير للتاريخ واللعبة والمكان وزرار «سجّل الآن»: قالب بيتعدل لأي بطولة."]
+                ],
+                result: "بوستر يخلّي اللاعب يسجّل قبل ما يكمل سكرول."
+            },
+            {
+                name: "اليوم الوطني",
+                tag: "مناسبة وطنية",
+                logo: "images/posters/poster-3" + EXTENSION,
+                mockup: "images/posters/mockup-national.jpg",
+                points: [
+                    ["الفكرة", "صورة مقسّمة لمربعات مدوّرة بتكوّن لوحة واحدة، وخلفية زخرفة تراثية بنقط بتدّي هوية محلية."],
+                    ["الألوان", "أخضر غامق مع أبيض ولمسة من ألوان الصخور: هوية وطنية راقية من غير استخدام مباشر للعلم."],
+                    ["الخط", "خط كوفي مربع للشعار بيشبه شكل الزخرفة نفسها، فالنص والخلفية متناسقين."],
+                    ["الرسالة", "شعار قصير فوق وتهنئة بسيطة تحت، فالتصميم يتقري كمناسبة مش كإعلان."]
+                ],
+                result: "بوستر مناسبة بيحسّسك بالانتماء مش بالإعلان."
+            },
+            {
+                name: "بروسيل للتسويق",
+                tag: "تسويق إلكتروني",
+                logo: "images/posters/poster-1" + EXTENSION,
+                mockup: "images/posters/mockup-marketing.jpg",
+                points: [
+                    ["الفكرة", "السهم في الشعار بيرمز للانطلاق، والعنوان «انطلق بأعمالك نحو القمة» بيكمّل نفس الفكرة."],
+                    ["الألوان", "كحلي غامق وأزرق سماوي: ألوان الثقة والتكنولوجيا، والأزرق الفاتح بيبرز العناصر المهمة."],
+                    ["ترتيب العناصر", "صورة الفريق جوه شكل سداسي بيدّي إحساس عصري ومنظم، والخدمات في نقاط قصيرة."],
+                    ["الرسالة", "4 خدمات واضحة وزرار تواصل، فالعميل يعرف بتقدّم إيه ويتصل."]
+                ],
+                result: "شكل شركة محترفة يطمّن لها العميل."
+            }
+            ]
+        },
+        cv: {
+            title: "ورا كل سيرة ذاتية فكرة",
+            desc: "من شغلنا: بنشرحلك إزاي كل سيرة اتصممت عشان تتقري بسرعة وتميّز صاحبها، وتقدر تطلب سيرتك بنفس الأسلوب.",
+            orderLabel: "اطلب سيرة ذاتية زي دي",
+            orderMsg: "عايز سيرة ذاتية بنفس فكرة سيرة ",
+            mainLabel: "السيرة الذاتية",
+            natural: true,
+            figMax: "400px",
+            items: [
+            {
+                name: "السيرة الهادية",
+                tag: "مجال التعليم",
+                logo: "images/cv/cv-1" + EXTENSION,
+                mockup: "images/cv/mockup-cv-1.jpg",
+                points: [
+                    ["الفكرة", "صفحة بيضا نظيفة وشريط بنفسجي هادي بيفصل رأس الصفحة عن باقي المحتوى، فالقارئ يعرف صاحب السيرة فورًا."],
+                    ["الألوان", "بنفسجي فاتح مع رمادي: ألوان هادية وبعيدة عن الزحمة وبتناسب مجال التعليم."],
+                    ["ترتيب العناصر", "بيانات التواصل في شريط واحد، وبعدها أقسام مرتبة (لمحة، خبرة، تعليم، مهارات، لغات) وكل قسم له عنوان واضح."],
+                    ["الرسالة", "سيرة بتتقري في دقيقة، وبتدّي انطباع إن صاحبها منظم وهادي."]
+                ],
+                result: "سيرة هادية ومنظمة بانطباع احترافي من غير مبالغة."
+            },
+            {
+                name: "السيرة الإبداعية",
+                tag: "مجال التصميم",
+                logo: "images/cv/cv-2" + EXTENSION,
+                mockup: "images/cv/mockup-cv-2.jpg",
+                points: [
+                    ["الفكرة", "أشكال عضوية منحنية بتدّي شخصية جريئة، وده بيناسب مجال التصميم لأن السيرة نفسها بتبقى عينة من الذوق."],
+                    ["الألوان", "أخضر مينت هادي مع مرجاني وبرتقالي: ألوان دافية ومبهجة بتميّز السيرة عن الأوراق الرسمية."],
+                    ["ترتيب العناصر", "عمودين: الملوّن للمهارات (بأشرطة مستوى) والتواصل، والأبيض للنبذة والخبرات والتعليم، فالأهم يظهر بسرعة."],
+                    ["الرسالة", "«مبدع ومنظم في نفس الوقت»، وده بيلفت نظر مسؤول التوظيف."]
+                ],
+                result: "سيرة تتفتكر وسط مئات السير المتشابهة."
+            },
+            {
+                name: "السيرة الرسمية",
+                tag: "الإدارة والتسويق",
+                logo: "images/cv/cv-3" + EXTENSION,
+                mockup: "images/cv/mockup-cv-3.jpg",
+                points: [
+                    ["الفكرة", "تصميم مؤسسي بإطار رفيع وصناديق للعناوين، بيدّي إحساس الانضباط والتنظيم."],
+                    ["الألوان", "درجات الرمادي على الأبيض: رسمي وهادي، وبيتطبع كويس بالأبيض والأسود."],
+                    ["ترتيب العناصر", "عمود جانبي ضيق للتواصل والتعليم والمهارات واللغات، وعمود رئيسي واسع للنبذة والخبرات، فالخبرات ياخدوا أكبر مساحة."],
+                    ["الرسالة", "مناسبة للمناصب الإدارية وللشركات اللي بتفضل الشكل الرسمي."]
+                ],
+                result: "سيرة بتعكس خبرة وجدية."
+            },
+            {
+                name: "السيرة العصرية",
+                tag: "مجال الجرافيك",
+                logo: "images/cv/cv-4" + EXTENSION,
+                mockup: "images/cv/mockup-cv-4.jpg",
+                points: [
+                    ["الفكرة", "رأس أسود عريض بالاسم والمسمى بخط أبيض كبير بيشد العين أول حاجة، وتحته صفحة منظمة."],
+                    ["الألوان", "أسود وأبيض مع لمسة أزرق للعناوين الفرعية وأشرطة المهارات: تباين قوي وبسيط."],
+                    ["ترتيب العناصر", "شريط رمادي فاتح للنبذة والتعليم، وبعده عمودين للخبرات والمهارات واللغات، فالقراءة بتنزل بشكل طبيعي."],
+                    ["الرسالة", "الأزرق بيوجّه العين للعناوين المهمة، فالقارئ يلاقي اللي بيدوّر عليه بسرعة."]
+                ],
+                result: "سيرة عصرية بتبان من أول نظرة."
+            }
+            ]
+        },
+        cards: {
+            title: "ورا كل كارت فكرة",
+            desc: "من شغلنا: بنشرحلك إزاي كل بيزنس كارد اتصمم عشان يتفتكر، وتقدر تطلب كارتك بنفس الأسلوب.",
+            orderLabel: "اطلب كارت زي ده",
+            orderMsg: "عايز بيزنس كارد بنفس فكرة كارت ",
+            mainLabel: "الكارت",
+            natural: true,
+            figMax: "460px",
+            items: [
+            {
+                name: "الكارت الذهبي",
+                tag: "المبيعات والأعمال",
+                logo: "images/business-cards/card-1" + EXTENSION,
+                mockup: "images/business-cards/mockup-card-1.jpg",
+                points: [
+                    ["الفكرة", "خلفية بيضا مفتوحة وزوايا سودا وذهبية بتأطّر الكارت، والاسم على جنب والتواصل على الجنب التاني فيتوازنوا."],
+                    ["الألوان", "ذهبي وأسود على أبيض: فخامة وثقة بتناسب التعامل مع العملاء."],
+                    ["الخط", "اسم بخط عريض غامق وتحته خط ذهبي صغير بيفصله عن المسمى، فأول حاجة تتقري هي الاسم."],
+                    ["الرسالة", "أيقونات دايرية ذهبية للتواصل بتخلي البيانات واضحة وسهلة."]
+                ],
+                result: "كارت يدّي انطباع الثقة من أول مصافحة."
+            },
+            {
+                name: "كارت الميزان",
+                tag: "المحاماة والاستشارات القانونية",
+                logo: "images/business-cards/card-2" + EXTENSION,
+                mockup: "images/business-cards/mockup-card-2.jpg",
+                points: [
+                    ["الفكرة", "رمز ميزان العدالة مع أغصان الغار بيعلن المجال من غير ما نكتب كلمة."],
+                    ["الألوان", "أسود وأبيض مع ذهبي وكريمي: هيبة ورسمية وثقة، وده المتوقع من مكتب قانوني."],
+                    ["ترتيب العناصر", "موجة ذهبية بتقسم الكارت لنص غامق (الرمز والاسم والمسمى) ونص فاتح (التواصل)، فالقراءة واضحة."],
+                    ["الرسالة", "هوية قوية بتطمّن العميل إن قضيته في إيد أمينة."]
+                ],
+                result: "كارت بيحمل هيبة المهنة."
+            },
+            {
+                name: "كارت الشعار",
+                tag: "التصميم والإبداع",
+                logo: "images/business-cards/card-3" + EXTENSION,
+                mockup: "images/business-cards/mockup-card-3.jpg",
+                points: [
+                    ["الفكرة", "شعار أبيض كبير على جنب بيدّي الكارت هوية، وبيانات التواصل على الجنب التاني."],
+                    ["الألوان", "وردي ترابي مع أسود وأبيض: لون مميز وهادي مش مألوف في كروت الشغل."],
+                    ["الخط", "كتابة بيضا بحدود سودا عشان تتقري بسهولة على الخلفية الملونة."],
+                    ["الرسالة", "منحنيات هادية في النص بتدّي حركة وبتفصل الشعار عن البيانات."]
+                ],
+                result: "كارت مميز بيلفت النظر."
+            },
+            {
+                name: "كارت الزخرفة",
+                tag: "التصميم الداخلي",
+                logo: "images/business-cards/card-4" + EXTENSION,
+                mockup: "images/business-cards/mockup-card-4.jpg",
+                points: [
+                    ["الفكرة", "شريط زخرفي متكرر على الجانب بنقوش دايرية شبه زخارف الديكور، وده بيعبّر عن المجال."],
+                    ["الألوان", "أسود دافي مع بيج ذهبي: أناقة بتناسب الديكور والفخامة."],
+                    ["ترتيب العناصر", "الاسم أبيض كبير فوق والمسمى بالذهبي، وخط فاصل، وبعدها بيانات مرتبة بأيقونات."],
+                    ["الرسالة", "بيانات كتير لكن من غير زحمة، لأن عند كل سطر أيقونة."]
+                ],
+                result: "كارت بيحكي ذوق صاحبه."
+            },
+            {
+                name: "كارت الصورة",
+                tag: "الاستشارات",
+                logo: "images/business-cards/card-5" + EXTENSION,
+                mockup: "images/business-cards/mockup-card-5.jpg",
+                points: [
+                    ["الفكرة", "صورة شخصية في دايرة بتخلي العميل يربط الوجه بالاسم، وده بيبني ثقة وقرب."],
+                    ["الألوان", "رمادي غامق وبرتقالي على أبيض: ألوان حيوية بتدّي طاقة واحترافية."],
+                    ["الأشكال", "مثلثات وخطوط هندسية وخلفية مدينة باهتة بتدّي إحساس الأعمال من غير ما تشتّت."],
+                    ["الرسالة", "اسم بخط عريض كبير وأربع بيانات تواصل بأيقونات، فالكارت سهل القراءة."]
+                ],
+                result: "كارت بيخلي العميل يفتكر صاحبه."
+            }
+            ]
+        },
+        menus: {
+            title: "ورا كل مينيو فكرة",
+            desc: "من شغلنا: بنشرحلك إزاي كل مينيو اتصمم عشان الزبون يلاقي اللي عايزه بسرعة ويشتهي الأكل، وتقدر تطلب مينيو بنفس الأسلوب.",
+            orderLabel: "اطلب مينيو زي ده",
+            orderMsg: "عايز مينيو بنفس فكرة مينيو ",
+            mainLabel: "المينيو",
+            natural: true,
+            figMax: "400px",
+            items: [
+            {
+                name: "المينيو الأحمر",
+                tag: "وجبات سريعة",
+                logo: "images/menus/menu-1" + EXTENSION,
+                mockup: "images/menus/mockup-menu-1.jpg",
+                points: [
+                    ["الفكرة", "تلات أصناف بس بصور كبيرة فوق شرايط صفرا، فالعين تقع على الأكل قبل أي كلام."],
+                    ["الألوان", "أحمر وأصفر: ألوان بتفتح الشهية وبتفكّر الزبون بمطاعم الوجبات السريعة."],
+                    ["ترتيب العناصر", "الأطباق بتتبادل يمين وشمال بشكل متعرج، وده بيدّي حركة، وخلفية برسومات أكل باهتة بتدّي طابع مرح."],
+                    ["الرسالة", "جملة دعوة للطلب في الآخر وعنوان كبير، فالمينيو بيشتغل كإعلان كمان."]
+                ],
+                result: "مينيو يفتح النفس قبل ما الزبون يقرأ."
+            },
+            {
+                name: "المينيو التراثي",
+                tag: "مأكولات شرقية",
+                logo: "images/menus/menu-2" + EXTENSION,
+                mockup: "images/menus/mockup-menu-2.jpg",
+                points: [
+                    ["الفكرة", "خلفية ورق قديم ممزق من فوق بتدّي إحساس التراث والأصالة، والصور على الأطراف بتكمّل الصفحة."],
+                    ["الألوان", "بني وبيج وذهبي: ألوان دافية بتفكّر بالمشاوي والخبز."],
+                    ["ترتيب العناصر", "قسمين واضحين كل واحد بعنوان داخل شريط، والأسعار مربوطة بالأصناف بنقط، فالعين تتبع السطر بسهولة."],
+                    ["الرسالة", "عنوان المطعم بخط ثقيل مع جملة قصيرة بتعرّف بنوع المطبخ."]
+                ],
+                result: "مينيو بيحكي أصالة المطبخ."
+            },
+            {
+                name: "المينيو الأخضر",
+                tag: "مطعم برجر",
+                logo: "images/menus/menu-3" + EXTENSION,
+                mockup: "images/menus/mockup-menu-3.jpg",
+                points: [
+                    ["الفكرة", "شريط مثلثات زخرفي فوق وتحت بيعمل إطار، وصورتين برجر كبار على الجنب بيعرّفوا بالنشاط فورًا."],
+                    ["الألوان", "أخضر غامق وأصفر على خلفية كريمي: ألوان طازجة ومبهجة."],
+                    ["ترتيب العناصر", "أقسام بعناوين كبيرة، وكل صنف باسمه وسعره ووصف صغير تحته، فالزبون يعرف المكونات قبل ما يسأل."],
+                    ["الرسالة", "الوصف المختصر بيساعد في البيع، والأسعار على نفس سطر الاسم."]
+                ],
+                result: "مينيو مرتب وسهل القراءة."
+            },
+            {
+                name: "المينيو الشعبي",
+                tag: "فول وطعمية",
+                logo: "images/menus/menu-4" + EXTENSION,
+                mockup: "images/menus/mockup-menu-4.jpg",
+                points: [
+                    ["الفكرة", "أربع صناديق بحدود رفيعة وعناوين بخط عربي حر، وصورة الأكل تحت بتسند التصميم."],
+                    ["الألوان", "كريمي وأحمر طوبي وأخضر غامق: ألوان بتفكّر بالأكل الشعبي."],
+                    ["ترتيب العناصر", "كل صندوق فيه قايمة بأسعارها على نفس السطر، فالمقارنة سهلة، والتواصل في الأعلى."],
+                    ["الرسالة", "شكل ودود ومرتب مناسب للمطاعم البسيطة."]
+                ],
+                result: "مينيو بسيط بيحسّسك بالدفا."
+            },
+            {
+                name: "المينيو الأنيق",
+                tag: "مشويات",
+                logo: "images/menus/menu-5" + EXTENSION,
+                mockup: "images/menus/mockup-menu-5.jpg",
+                points: [
+                    ["الفكرة", "عنوان بخط عربي حر في النص مع رسم خفيف وراه، وحواليه التواصل والتوصيل، فالهوية تظهر قبل القايمة."],
+                    ["الألوان", "عنابي غامق على بيج فاتح: أناقة بتناسب المشويات."],
+                    ["ترتيب العناصر", "عناوين الأقسام في كبسولات عنابية، والأصناف باسمها وسعرها ووصف قصير، وصورة المشويات في الركن."],
+                    ["الرسالة", "جملة صغيرة آخر الصفحة عن الجودة والطزاجة بتطمّن الزبون."]
+                ],
+                result: "مينيو بيدّي إحساس الجودة."
+            }
+            ]
+        },
+        covers: {
+            title: "ورا كل تصميم فكرة",
+            desc: "من شغلنا في عالم الكتب والقراءة: بنشرحلك فكرة كل تصميم وليه اتصمم كده، وتقدر تطلب تصميم بنفس الأسلوب.",
+            orderLabel: "اطلب تصميم زي ده",
+            orderMsg: "عايز تصميم بنفس فكرة تصميم ",
+            mainLabel: "التصميم",
+            natural: true,
+            figMax: "340px",
+            items: [
+            {
+                name: "التصميم الدافي",
+                tag: "مكتبة وكتب",
+                logo: "images/book-covers/cover-1" + EXTENSION,
+                mockup: "images/book-covers/mockup-cover-1.jpg",
+                points: [
+                    ["الفكرة", "خلفية بيج هادية وعنوان ضخم بخط عريض غامق، وتحته كوم كتب على كرسي خشب بيحكي الموضوع من غير كلام."],
+                    ["الألوان", "بيج وبني وخشبي: ألوان دافية بتفكّر بالورق والمكتبات."],
+                    ["ترتيب العناصر", "العنوان فوق في أول نظرة، ونجمة بيضا بنسبة الخصم بتجذب العين، وزرار أبيض دايري تحت بيوجّه للخطوة الجاية."],
+                    ["الرسالة", "عرض واضح في جملة واحدة وزرار طلب مباشر."]
+                ],
+                result: "تصميم دافي بيخلّي القارئ يحب الكتب."
+            },
+            {
+                name: "التصميم الأزرق",
+                tag: "كورسات وتعليم",
+                logo: "images/book-covers/cover-2" + EXTENSION,
+                mockup: "images/book-covers/mockup-cover-2.jpg",
+                points: [
+                    ["الفكرة", "عنوان أبيض كبير على أزرق عميق، وكتلة مرجانية منحنية بتكسر الجمود وبتشدّ العين للصورة."],
+                    ["الألوان", "أزرق ومرجاني وأبيض: ثقة وطاقة بتناسب الدورات التعليمية."],
+                    ["ترتيب العناصر", "العنوان ثم جملة الدعوة ثم بقعة الخصم، وبعدها الصورة تحت، فالقراءة بتنزل بشكل طبيعي."],
+                    ["الرسالة", "لمسة فرشاة مرجانية حوالين نسبة الخصم بتلفت النظر ليها."]
+                ],
+                result: "تصميم قوي بيخلّي العرض يتشاف."
+            },
+            {
+                name: "التصميم الحروفي",
+                tag: "اللغة العربية",
+                logo: "images/book-covers/cover-3" + EXTENSION,
+                mockup: "images/book-covers/mockup-cover-3.jpg",
+                points: [
+                    ["الفكرة", "حرف عربي ضخم وراه كوم كتب، بيجمع الحرف والكتاب في مشهد واحد، وعلامة اقتباس كبيرة باهتة في الخلفية."],
+                    ["الألوان", "أبيض وبني وذهبي: هادي وأصيل، والذهبي مخصص للرقم المهم."],
+                    ["ترتيب العناصر", "العنوان فوق وجملة العرض في النص مع رقم كبير، والحرف والكتب في الأسفل."],
+                    ["الرسالة", "الحرف الكبير بيعبّر عن اللغة العربية بصريًا من غير شرح."]
+                ],
+                result: "تصميم بيخلّي الحرف هو بطل المشهد."
+            },
+            {
+                name: "التصميم الترابي",
+                tag: "مناسبة وطنية",
+                logo: "images/book-covers/cover-4" + EXTENSION,
+                mockup: "images/book-covers/mockup-cover-4.jpg",
+                points: [
+                    ["الفكرة", "كتاب مفتوح بصفحات مروحية في الركن بيدّي حركة، وعنوان من جملتين بيشد انتباه القارئ."],
+                    ["الألوان", "أحمر ترابي وأبيض كريمي: لون جريء ودافي وقريب من الطين."],
+                    ["ترتيب العناصر", "النص الأبيض الكبير في النص، والكتاب في أسفل الجنب، وزخارف صغيرة فوق بتملى المساحة."],
+                    ["الرسالة", "عنوان بيبدأ بنفي وبيكمل بمعنى أعمق، فبيشد القارئ يكمل."]
+                ],
+                result: "تصميم بجملة تشدّ وتفضل في الذاكرة."
+            },
+            {
+                name: "التصميم الرسومي",
+                tag: "القراءة والثقافة",
+                logo: "images/book-covers/cover-5" + EXTENSION,
+                mockup: "images/book-covers/mockup-cover-5.jpg",
+                points: [
+                    ["الفكرة", "رسمة مبسطة لشخص ماسك كتاب كبير مغطي وشه، فالكتاب هو البطل."],
+                    ["الألوان", "أزرق رمادي مع بنفسجي وبرتقالي وبيج: ألوان هادية بلمسات دافية."],
+                    ["ترتيب العناصر", "العنوان فوق والرسمة في النص ونص تعريفي قصير تحت، فالصفحة متوازنة ومفيهاش زحمة."],
+                    ["الرسالة", "تحفيز على القراءة بجملة هادية."]
+                ],
+                result: "تصميم لطيف بيحمّس على القراءة."
+            }
+            ]
+        }
+        };
+
+        (function () {
+            var type = new URLSearchParams(window.location.search).get("type");
+            var config = GALLERIES[type] || GALLERIES.logos;
+            var key = GALLERIES[type] ? type : "logos";
+            var study = CASE_STUDIES[key];
+
+            var grid = document.getElementById("gallery-grid");
+            var count = 0;
+
+            document.title = config.title + " | MARO DESIGN";
+            document.getElementById("gallery-eyebrow").textContent = config.eyebrow;
+            document.getElementById("gallery-title").textContent = config.title;
+
+            var customOrder = document.getElementById("custom-order");
+            customOrder.setAttribute("data-service", config.service);
+
+            if (config.dark) {
+                grid.classList.add("is-dark");
+                grid.style.setProperty("--ratio", config.ratio || "3 / 4");
+            }
+
+            if (study) {
+                grid.classList.add("is-cases");
+                document.getElementById("gallery-title").textContent = study.title;
+                document.getElementById("gallery-desc").textContent = study.desc;
+            }
+
+            function addCard(number, src) {
+                var name = config.label + " رقم " + number;
+
+                var article = document.createElement("article");
+                article.className = "logo-item";
+
+                var img = document.createElement("img");
+                img.src = src;
+                img.alt = "تصميم " + name;
+                article.appendChild(img);
+
+                var content = document.createElement("div");
+                content.className = "logo-item-content";
+
+                var title = document.createElement("h3");
+                title.textContent = name;
+                content.appendChild(title);
+
+                var button = document.createElement("a");
+                button.className = "order-button";
+                button.href = "https://wa.me/" + WHATSAPP;
+                button.target = "_blank";
+                button.rel = "noopener";
+                button.setAttribute("data-design", name);
+                button.textContent = "اطلب هذا التصميم";
+                content.appendChild(button);
+
+                article.appendChild(content);
+                grid.appendChild(article);
+                count++;
+            }
+
+            function addCase(c) {
+                var article = document.createElement("article");
+                article.className = "case-study";
+
+                var images = document.createElement("div");
+                images.className = "case-images" + (study.natural ? " natural" : "");
+                if (study.figMax) { images.style.setProperty("--fig-max", study.figMax); }
+                [[c.logo, study.mainLabel, true], [c.mockup, "على أرض الواقع", false]].forEach(function (p) {
+                    var fig = document.createElement("figure");
+                    var img = document.createElement("img");
+                    img.src = p[0];
+                    img.alt = c.name + " - " + p[1];
+                    img.onerror = function () {
+                        if (!p[2]) { fig.style.display = "none"; return; }
+                        fig.innerHTML = "";
+                        var msg = document.createElement("div");
+                        msg.style.cssText = "padding:28px 14px;text-align:center;color:#ffb4b4;font-size:13px;direction:ltr;word-break:break-all";
+                        msg.textContent = "Image not found: " + p[0];
+                        fig.appendChild(msg);
+                    };
+                    var cap = document.createElement("figcaption");
+                    cap.textContent = p[1];
+                    fig.appendChild(img);
+                    fig.appendChild(cap);
+                    images.appendChild(fig);
+                });
+                article.appendChild(images);
+
+                var head = document.createElement("div");
+                head.className = "case-head";
+                var h = document.createElement("h3");
+                h.textContent = c.name;
+                var tag = document.createElement("span");
+                tag.className = "case-tag";
+                tag.textContent = c.tag;
+                head.appendChild(h);
+                head.appendChild(tag);
+                article.appendChild(head);
+
+                var ul = document.createElement("ul");
+                ul.className = "case-points";
+                c.points.forEach(function (p) {
+                    var li = document.createElement("li");
+                    var s = document.createElement("strong");
+                    s.textContent = p[0];
+                    li.appendChild(s);
+                    li.appendChild(document.createTextNode(p[1]));
+                    ul.appendChild(li);
+                });
+                article.appendChild(ul);
+
+                var result = document.createElement("div");
+                result.className = "case-result";
+                result.textContent = c.result;
+                article.appendChild(result);
+
+                var button = document.createElement("a");
+                button.className = "order-button";
+                button.href = "https://wa.me/" + WHATSAPP + "?text=" +
+                    encodeURIComponent(study.orderMsg + c.name);
+                button.target = "_blank";
+                button.rel = "noopener";
+                button.textContent = study.orderLabel;
+                article.appendChild(button);
+
+                grid.appendChild(article);
+                count++;
+            }
+
+            function finish() {
+                if (count === 0) {
+                    var empty = document.createElement("p");
+                    empty.className = "gallery-empty";
+                    empty.textContent = "لسه بنجهّز التصاميم هنا. تقدر تطلب تصميم مخصوص مباشرة من الزرار تحت.";
+                    grid.appendChild(empty);
+                }
+            }
+
+            // تحميل الصور بالترتيب لحد أول صورة مش موجودة
+            function loadNext(number) {
+                if (number > MAX_IMAGES) {
+                    finish();
+                    return;
+                }
+
+                var src = config.folder + config.prefix + number + EXTENSION;
+                var probe = new Image();
+
+                probe.onload = function () {
+                    addCard(number, src);
+                    loadNext(number + 1);
+                };
+
+                probe.onerror = finish;
+                probe.src = src;
+            }
+
+            if (study) {
+                study.items.forEach(addCase);
+                finish();
+            } else {
+                loadNext(1);
+            }
+        })();
+    </script>
+</body>
+
+</html>
